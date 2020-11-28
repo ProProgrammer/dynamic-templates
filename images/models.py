@@ -25,3 +25,20 @@ class Template(models.Model):
     csv_file_name = models.CharField(max_length=30, null=False, blank=False)
     processed = models.BooleanField(default=False)
     template = models.JSONField()
+
+    def __str__(self):
+        """
+        Set the template's str representation to: Template with url <url> and text <text>
+        """
+        url = text = None
+        for item in list(self.template.values()):
+            try:
+                for record in item:
+                    if record.get('type') == 'image':
+                        url = record['url']
+                    elif record.get('type') == 'textbox':
+                        text = record['text']
+            except TypeError:
+                pass
+
+        return f'Template with url {url} and text {text}'

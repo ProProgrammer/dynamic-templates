@@ -1,5 +1,11 @@
 import logging
 
+import requests
+from django.http import HttpRequest
+from django.urls import reverse
+
+from .models import Template, TemplateStore
+
 logger = logging.getLogger(__name__)
 
 
@@ -63,15 +69,12 @@ def generate_data_templates_from_csv_data(csv_file) -> None:
         for row in reader:
             price, url = row[1], row[-1]
 
-            from .models import TemplateStore
-
             # For all templates in TemplateStore
             #
-            for template in TemplateStore.objects.all():
+            for template_store_object in TemplateStore.objects.all():
                 template_with_substituted_url_and_price = update_url_and_text_in_template(
-                    template, url=url, text=f'Now at ${price}')
+                    template=template_store_object.template, url=url, text=f'Now at ${price}')
 
-                from .models import Template
                 data_template_obj = Template.objects.create(
                     csv_file_name=csv_file, processed=False, template=template_with_substituted_url_and_price
                 )

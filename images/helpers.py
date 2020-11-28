@@ -1,9 +1,5 @@
 import logging
 
-import requests
-from django.http import HttpRequest
-from django.urls import reverse
-
 from .models import Template, TemplateStore
 
 logger = logging.getLogger(__name__)
@@ -65,7 +61,7 @@ def generate_data_templates_from_csv_data(csv_file) -> None:
 
     with open(csv_file, 'r') as csv_data:
         reader = csv.reader(csv_data)
-        next(reader, None)    # skip the headers
+        next(reader, None)  # skip the headers
         for row in reader:
             price, url = row[1], row[-1]
 
@@ -83,17 +79,3 @@ def generate_data_templates_from_csv_data(csv_file) -> None:
                 )
 
         logger.info(f'Parsed CSV file: {csv_file} and created data template objects')
-
-
-def process_data_templates():
-    """
-    Fetch unprocessed templates (`Template` object) and process them with IGS API
-    If the API return status OK, mark the template as processed.
-    """
-    pass
-
-# Introduce polling mechanism that checks if there's new CSV
-# Seek clarification - In case of new data, will existing CSV be updated with new data or will new CSVs be uploaded?
-# If new CSV, it becomes easy, as we can simply store in cache which was the last CSV processed and constantly check
-# if the most recent CSV is different than the last CSV.
-
